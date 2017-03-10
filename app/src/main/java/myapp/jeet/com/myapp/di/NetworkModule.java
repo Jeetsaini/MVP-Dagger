@@ -6,7 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import myapp.jeet.com.myapp.api.RetroFitService;
 import myapp.jeet.com.myapp.api.RetrofitFactory;
-import myapp.jeet.com.myapp.api.RetrofitNetworkClient;
+import myapp.jeet.com.myapp.model.RetrofitNetworkClient;
 
 /**
  * Created by Admin on 3/8/2017.

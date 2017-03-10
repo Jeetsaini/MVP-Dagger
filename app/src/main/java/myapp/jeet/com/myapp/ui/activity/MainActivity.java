@@ -1,28 +1,34 @@
-package myapp.jeet.com.myapp.view;
+package myapp.jeet.com.myapp.ui.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import myapp.jeet.com.myapp.R;
-import myapp.jeet.com.myapp.api.RetrofitAPICallBack;
-import myapp.jeet.com.myapp.api.RetrofitNetworkClient;
+import myapp.jeet.com.myapp.model.RetrofitNetworkClient;
+import myapp.jeet.com.myapp.api.model.model.Artist;
 import myapp.jeet.com.myapp.api.model.model.ArtistsSearch;
-import myapp.jeet.com.myapp.model.CityListResponse;
-import myapp.jeet.com.myapp.model.Response;
+import myapp.jeet.com.myapp.ui.adapters.ArtistRecyclerViewAdapter;
+import myapp.jeet.com.myapp.helpers.DividerItemDecoration;
 import myapp.jeet.com.myapp.presentar.MainPresentar;
 import myapp.jeet.com.myapp.spotify.BaseApplication;
-import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener,MainPresentar.MainView{
@@ -31,29 +37,34 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private CompositeSubscription subscriptions;
     private SearchView searchView;
     private Toolbar toolbar;
+    private MainPresentar mMainPresentar;
+    private RecyclerView  mRecyclerView;
+    private ProgressBar mProgressBar;
+    private TextView mNotFound;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mRecyclerView=(RecyclerView)findViewById(R.id.artist_recylerview);
+        mProgressBar=(ProgressBar)findViewById(R.id.progressbar);
+        mNotFound=(TextView)findViewById(R.id.not_found);
+        setUpRecylerView(mRecyclerView,getApplicationContext());
         initializeDagger();
         setUpToolbar();
-      /*  subscriptions=new CompositeSubscription();
+        initPresentar();
 
-        Subscription subscription = mRetrofitNetworkClient.callNetworkAPI(new RetrofitAPICallBack<CityListResponse>() {
-            @Override
-            public void onSuccess(CityListResponse o) {
-
-            }
-
-            @Override
-            public void onFailure(String message) {
-
-            }
-        });
-        subscriptions.add(subscription);*/
     }
+    public void setUpRecylerView(RecyclerView recylerView, Context context)
+    {
+        recylerView.setHasFixedSize(false);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(context);
+        recylerView.setLayoutManager(mLayoutManager);
+        recylerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
+        recylerView.setItemAnimator(new DefaultItemAnimator());
+    }
+
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -67,21 +78,22 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
     private void initPresentar()
     {
-
+        mMainPresentar=new MainPresentar(this,mRetrofitNetworkClient);
     }
 
     private void setUpToolbar()
     {
         toolbar=(Toolbar)findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar =getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(false);
 
         }
-        toolbar.setTitle("Dagger");
+
     }
 
     @Override
@@ -98,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
     @Override
     public boolean onQueryTextSubmit(String query) {
+        mMainPresentar.searchMusic(query);
         return false;
     }
 
@@ -108,21 +121,24 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public void showLoading() {
-
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void dismissLoading() {
-
+        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void setAdapter(ArtistsSearch artistsSearch) {
-
+        List<Artist> artistList=artistsSearch.getArtists();
+        ArtistRecyclerViewAdapter artistRecyclerViewAdapter=new ArtistRecyclerViewAdapter(MainActivity.this,artistList);
+        mRecyclerView.setAdapter(artistRecyclerViewAdapter);
     }
 
     @Override
     public void onError() {
-
+        mNotFound.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
     }
 }

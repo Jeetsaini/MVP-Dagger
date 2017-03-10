@@ -1,8 +1,10 @@
-package myapp.jeet.com.myapp.api;
+package myapp.jeet.com.myapp.model;
 
+import android.util.Log;
+
+import myapp.jeet.com.myapp.api.RetroFitService;
+import myapp.jeet.com.myapp.api.RetrofitAPICallBack;
 import myapp.jeet.com.myapp.api.model.model.ArtistsSearch;
-import myapp.jeet.com.myapp.model.CityListResponse;
-import myapp.jeet.com.myapp.model.Response;
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -32,7 +34,7 @@ public class RetrofitNetworkClient<T> {
 
                   @Override
                   public void onError(Throwable e) {
-
+                      Log.d("Error",e.toString());
                   }
 
                   @Override

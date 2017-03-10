@@ -3,7 +3,7 @@ package myapp.jeet.com.myapp.di;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import myapp.jeet.com.myapp.view.MainActivity;
+import myapp.jeet.com.myapp.ui.activity.MainActivity;
 
 /**
  * Created by Admin on 3/8/2017.
@@ -15,5 +15,6 @@ import myapp.jeet.com.myapp.view.MainActivity;
 public interface MainComponent {
     //You can inject this module below Activities
     void inject(MainActivity mainActivity);
+
 
 }

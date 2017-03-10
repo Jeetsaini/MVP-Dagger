@@ -21,14 +21,12 @@ public class RetrofitFactory {
 
     public static RetroFitService create()
     {
-
-
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(2, TimeUnit.MINUTES)
                 .readTimeout(2, TimeUnit.MINUTES)
                 .build();
        return new Retrofit.Builder()
-                .baseUrl("http://private-b8cf44-androidcleancode.apiary-mock.com/")
+                .baseUrl(Constants.SPOTIFY_API)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())

@@ -1,27 +1,30 @@
 package myapp.jeet.com.myapp.presentar;
 
-import javax.inject.Inject;
-
 import myapp.jeet.com.myapp.api.RetrofitAPICallBack;
-import myapp.jeet.com.myapp.api.RetrofitNetworkClient;
+import myapp.jeet.com.myapp.model.RetrofitNetworkClient;
 import myapp.jeet.com.myapp.api.model.model.ArtistsSearch;
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Admin on 3/9/2017.
  */
 
 public class MainPresentar {
-    @Inject
+
     RetrofitNetworkClient retrofitNetworkClient;
     private MainView mMainView;
-    public MainPresentar(MainView mainView) {
+    private CompositeSubscription mCompositeSubscription;
+    public MainPresentar(MainView mainView,RetrofitNetworkClient retrofitNetworkClient) {
         this.mMainView=mainView;
+        mCompositeSubscription=new CompositeSubscription();
+        this.retrofitNetworkClient=retrofitNetworkClient;
     }
 
     public void searchMusic(String query)
     {
         mMainView.showLoading();
-        retrofitNetworkClient.callNetworkAPI(query, new RetrofitAPICallBack<ArtistsSearch>() {
+       Subscription subscription= retrofitNetworkClient.callNetworkAPI(query, new RetrofitAPICallBack<ArtistsSearch>() {
             @Override
             public void onSuccess(ArtistsSearch artistsSearch) {
                 mMainView.dismissLoading();
@@ -33,6 +36,7 @@ public class MainPresentar {
               mMainView.onError();
             }
         });
+        mCompositeSubscription.add(subscription);
     }
 
     public interface MainView
