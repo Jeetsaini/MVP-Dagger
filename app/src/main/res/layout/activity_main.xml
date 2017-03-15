@@ -24,6 +24,13 @@
 
     </android.support.v7.widget.RecyclerView>
     </LinearLayout>
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Launch"
+        android:onClick="launchAcitivty"/>
     <ProgressBar
         android:id="@+id/progressbar"
         android:layout_width="60dp"

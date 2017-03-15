@@ -2,8 +2,12 @@ package myapp.jeet.com.myapp.ui.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,11 +20,13 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import myapp.jeet.com.myapp.IdlingResource.SimpleIdlingResource;
 import myapp.jeet.com.myapp.R;
 import myapp.jeet.com.myapp.model.RetrofitNetworkClient;
 import myapp.jeet.com.myapp.api.model.model.Artist;
@@ -34,14 +40,14 @@ import rx.subscriptions.CompositeSubscription;
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener,MainPresentar.MainView{
     @Inject
     RetrofitNetworkClient mRetrofitNetworkClient;
-    private CompositeSubscription subscriptions;
-    private SearchView searchView;
+
     private Toolbar toolbar;
     private MainPresentar mMainPresentar;
     private RecyclerView  mRecyclerView;
     private ProgressBar mProgressBar;
     private TextView mNotFound;
 
+    @Nullable private SimpleIdlingResource mIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +77,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onPostCreate(savedInstanceState);
     }
 
+    public void launchAcitivty(View view)
+    {
+        view.setVisibility(View.GONE);
+        mMainPresentar.searchMusic("company");
+        /*Toast.makeText(getApplicationContext(),"show toast",Toast.LENGTH_LONG).show();*/
+    }
     private void initializeDagger()
     {
         BaseApplication baseApplication=(BaseApplication)getApplication();
@@ -91,9 +103,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(false);
-
         }
-
     }
 
     @Override
@@ -105,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setOnQueryTextListener(this);
         return true;
-
 
     }
     @Override
@@ -140,5 +149,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void onError() {
         mNotFound.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.GONE);
+    }
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+            mMainPresentar.setIdlingResource(mIdlingResource);
+        }
+        return mIdlingResource;
     }
 }

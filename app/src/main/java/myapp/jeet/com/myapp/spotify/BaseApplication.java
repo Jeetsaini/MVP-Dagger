@@ -13,6 +13,7 @@ import myapp.jeet.com.myapp.di.NetworkModule;
 
 public class BaseApplication extends Application{
     private MainComponent mMainComponent;
+    private NetworkModule mNetworkModule;
 
     @Override
     public void onCreate() {
@@ -23,6 +24,14 @@ public class BaseApplication extends Application{
     public MainComponent getMainComponent()
     {
         return mMainComponent;
+    }
+
+    public void setMainModule(NetworkModule networkModule)
+    {
+        this.mNetworkModule=networkModule;
+        mMainComponent= DaggerMainComponent.builder().networkModule(new NetworkModule()).build();
+
+
     }
 
 
