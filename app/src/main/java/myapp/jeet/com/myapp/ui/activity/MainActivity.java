@@ -2,7 +2,6 @@ package myapp.jeet.com.myapp.ui.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,6 +27,7 @@ import javax.inject.Inject;
 
 import myapp.jeet.com.myapp.IdlingResource.SimpleIdlingResource;
 import myapp.jeet.com.myapp.R;
+import myapp.jeet.com.myapp.helpers.RecyclerTouchListener;
 import myapp.jeet.com.myapp.model.RetrofitNetworkClient;
 import myapp.jeet.com.myapp.api.model.model.Artist;
 import myapp.jeet.com.myapp.api.model.model.ArtistsSearch;
@@ -35,7 +35,6 @@ import myapp.jeet.com.myapp.ui.adapters.ArtistRecyclerViewAdapter;
 import myapp.jeet.com.myapp.helpers.DividerItemDecoration;
 import myapp.jeet.com.myapp.presentar.MainPresentar;
 import myapp.jeet.com.myapp.spotify.BaseApplication;
-import rx.subscriptions.CompositeSubscription;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener,MainPresentar.MainView{
     @Inject
@@ -46,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private RecyclerView  mRecyclerView;
     private ProgressBar mProgressBar;
     private TextView mNotFound;
+    private List<Artist> mArtistList;
 
     @Nullable private SimpleIdlingResource mIdlingResource;
 
@@ -69,6 +69,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recylerView.setLayoutManager(mLayoutManager);
         recylerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
         recylerView.setItemAnimator(new DefaultItemAnimator());
+        recylerView.addOnItemTouchListener(new RecyclerTouchListener(MainActivity.this, recylerView, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                String artist=mArtistList.get(position).name;
+                Toast.makeText(getApplicationContext(),artist,Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
     }
 
 
@@ -77,12 +89,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onPostCreate(savedInstanceState);
     }
 
-    public void launchAcitivty(View view)
-    {
-        view.setVisibility(View.GONE);
-        mMainPresentar.searchMusic("company");
-        /*Toast.makeText(getApplicationContext(),"show toast",Toast.LENGTH_LONG).show();*/
-    }
+
     private void initializeDagger()
     {
         BaseApplication baseApplication=(BaseApplication)getApplication();
@@ -140,10 +147,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public void setAdapter(ArtistsSearch artistsSearch) {
-        List<Artist> artistList=artistsSearch.getArtists();
-        ArtistRecyclerViewAdapter artistRecyclerViewAdapter=new ArtistRecyclerViewAdapter(MainActivity.this,artistList);
+        mArtistList =artistsSearch.getArtists();
+        ArtistRecyclerViewAdapter artistRecyclerViewAdapter=new ArtistRecyclerViewAdapter(MainActivity.this, mArtistList);
         mRecyclerView.setAdapter(artistRecyclerViewAdapter);
     }
+
 
     @Override
     public void onError() {

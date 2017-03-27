@@ -26,10 +26,10 @@ public class MainPresentar {
     public void searchMusic(String query)
     {
 
-        if(mSimpleIdlingResource==null) {
-            mSimpleIdlingResource=new SimpleIdlingResource();
+        /*if(mSimpleIdlingResource==null) {
+           // mSimpleIdlingResource=new SimpleIdlingResource();
             mSimpleIdlingResource.setIdleState(true);
-        }
+        }*/
         mMainView.showLoading();
         Subscription subscription= retrofitNetworkClient.callNetworkAPI(query, new RetrofitAPICallBack<ArtistsSearch>() {
             @Override
@@ -38,9 +38,9 @@ public class MainPresentar {
                 mMainView.setAdapter(artistsSearch);
 
 
-                if(mSimpleIdlingResource!=null) {
+               /* if(mSimpleIdlingResource!=null) {
                     mSimpleIdlingResource.setIdleState(false);
-                }
+                }*/
 
             }
 

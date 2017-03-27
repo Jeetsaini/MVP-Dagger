@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.media.MediaMetadataCompat;
@@ -29,6 +30,7 @@ import myapp.jeet.com.myapp.presentar.MainPresentar;
 import myapp.jeet.com.myapp.spotify.BaseApplication;
 import myapp.jeet.com.myapp.ui.activity.MainActivity;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -72,14 +74,14 @@ public class MainViewAndroidTest {
 
         mRetrofitNetworkClient=networkModule.getRetrofitClient(mRetroFitService);
         mainPresentar=new MainPresentar(mMainView,mRetrofitNetworkClient);
-        mIdlingResource = activityActivityTestRule.getActivity().getIdlingResource();
+        // mIdlingResource = activityActivityTestRule.getActivity().getIdlingResource();
         // To prove that the test fails, omit this call:
-        Espresso.registerIdlingResources(mIdlingResource);
+        // Espresso.registerIdlingResources(mIdlingResource);
         /*when(networkModule.getRetrofitService()).thenReturn(mock(RetroFitService.class)); // this is needed to fool dagger
         when(networkModule.getRetrofitClient(mRetroFitService))
                 .thenReturn(mRetrofitNetworkClient);*/
 
-        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        Instrumentation instrumentation = getInstrumentation();
         BaseApplication app
                 = (BaseApplication) instrumentation.getTargetContext().getApplicationContext();
 
@@ -91,19 +93,18 @@ public class MainViewAndroidTest {
     @Test
     public void querySubmited()
     {
-       // activityActivityTestRule.launchActivity(new Intent());
-     //  mainPresentar.searchMusic("company");
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
-        onView(withId(R.id.menu_search)).perform(typeText("company")).perform(pressImeActionButton());
-        //onView(withId(R.id.button)).perform(click());
+        onView(withId(R.id.menu_search)).perform(click());
+        onView(withId(android.support.v7.appcompat.R.id.search_src_text)).perform(typeText("company"), pressKey(KeyEvent.KEYCODE_ENTER));
 
-        //when(mainPresentar.searchMusic("company")).thenReturn(mMainView.showLoading());
+    }
 
-     /*   mainPresentar.searchMusic("company");*/
-       // onView(isAssignableFrom(SearchView.class)).perform(typeText("company"), pressKey(KeyEvent.KEYCODE_ENTER));
-
-
-
+    @Test
+    public void recyclerViewClickTest()
+    {
+        onView(withId(R.id.menu_search)).perform(click());
+        onView(withId(android.support.v7.appcompat.R.id.search_src_text)).perform(typeText("company"), pressKey(KeyEvent.KEYCODE_ENTER));
+        onView(withId(R.id.artist_recylerview))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(3, click()));
     }
 
     @After
