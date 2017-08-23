@@ -29,12 +29,13 @@ public class RetrofitNetworkClient<T> {
               .subscribe(new Observer<ArtistsSearch>() {
                   @Override
                   public void onCompleted() {
-
+                      Log.d("Completed","");
                   }
 
                   @Override
                   public void onError(Throwable e) {
                       Log.d("Error",e.toString());
+                      mRetrofitAPICallBack.onFailure(e.toString());
                   }
 
                   @Override

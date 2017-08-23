@@ -1,11 +1,14 @@
 package myapp.jeet.com.myapp.di;
 
+import android.content.Context;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import myapp.jeet.com.myapp.api.RetroFitService;
 import myapp.jeet.com.myapp.api.RetrofitFactory;
+import myapp.jeet.com.myapp.model.PlayerSpotify;
 import myapp.jeet.com.myapp.model.RetrofitNetworkClient;
 
 /**
@@ -14,8 +17,14 @@ import myapp.jeet.com.myapp.model.RetrofitNetworkClient;
 @Module
 public class NetworkModule {
     private RetroFitService mRetroFitService;
+    private Context mContext;
 
-    @Provides
+    public NetworkModule(Context context)
+    {
+        this.mContext=context;
+    }
+
+   /* @Provides
     @Singleton
     public RetroFitService getRetrofitService()
     {
@@ -31,6 +40,13 @@ public class NetworkModule {
         RetrofitNetworkClient retrofitNetworkClient=new RetrofitNetworkClient(retroFitService);
         return retrofitNetworkClient;
     }
+
+    @Provides
+    @Singleton
+    public PlayerSpotify getPlayerSpotify()
+    {
+        return new PlayerSpotify(mContext);
+    }*/
 
 
 

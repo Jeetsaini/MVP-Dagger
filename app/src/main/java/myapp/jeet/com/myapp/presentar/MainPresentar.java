@@ -37,16 +37,12 @@ public class MainPresentar {
                 mMainView.dismissLoading();
                 mMainView.setAdapter(artistsSearch);
 
-
-               /* if(mSimpleIdlingResource!=null) {
-                    mSimpleIdlingResource.setIdleState(false);
-                }*/
-
             }
 
             @Override
             public void onFailure(String message) {
-              mMainView.onError();
+                mMainView.dismissLoading();
+                mMainView.onError();
             }
         });
         mCompositeSubscription.add(subscription);
@@ -57,11 +53,17 @@ public class MainPresentar {
         this.mSimpleIdlingResource=simpleIdlingResource;
     }
 
+    public void notFoundClicked()
+    {
+
+    }
+
     public interface MainView
     {
         void showLoading();
         void dismissLoading();
         void setAdapter(ArtistsSearch artistsSearch);
         void onError();
+        void notFoundResponse(String toast);
     }
 }

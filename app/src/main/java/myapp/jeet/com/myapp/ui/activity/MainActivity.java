@@ -2,6 +2,7 @@ package myapp.jeet.com.myapp.ui.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,17 +36,18 @@ import myapp.jeet.com.myapp.ui.adapters.ArtistRecyclerViewAdapter;
 import myapp.jeet.com.myapp.helpers.DividerItemDecoration;
 import myapp.jeet.com.myapp.presentar.MainPresentar;
 import myapp.jeet.com.myapp.spotify.BaseApplication;
+import myapp.jeet.com.myapp.ui.player.SpotifyPlayerActivity;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener,MainPresentar.MainView{
     @Inject
     RetrofitNetworkClient mRetrofitNetworkClient;
-
     private Toolbar toolbar;
     private MainPresentar mMainPresentar;
     private RecyclerView  mRecyclerView;
     private ProgressBar mProgressBar;
     private TextView mNotFound;
     private List<Artist> mArtistList;
+    private TextView notFound;
 
     @Nullable private SimpleIdlingResource mIdlingResource;
 
@@ -56,10 +58,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mRecyclerView=(RecyclerView)findViewById(R.id.artist_recylerview);
         mProgressBar=(ProgressBar)findViewById(R.id.progressbar);
         mNotFound=(TextView)findViewById(R.id.not_found);
+
         setUpRecylerView(mRecyclerView,getApplicationContext());
         initializeDagger();
         setUpToolbar();
         initPresentar();
+        mNotFound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              mMainPresentar.notFoundClicked();
+            }
+        });
 
     }
     public void setUpRecylerView(RecyclerView recylerView, Context context)
@@ -73,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             @Override
             public void onClick(View view, int position) {
                 String artist=mArtistList.get(position).name;
+                Intent intent=new Intent(getApplicationContext(), SpotifyPlayerActivity.class);
+                intent.putExtra("artist",mArtistList.get(position));
+                startActivity(intent);
                 Toast.makeText(getApplicationContext(),artist,Toast.LENGTH_LONG).show();
             }
 
@@ -93,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void initializeDagger()
     {
         BaseApplication baseApplication=(BaseApplication)getApplication();
-        baseApplication.getMainComponent().inject(this);
+        baseApplication.getMainComponent(MainActivity.this).inject(this);
     }
     private void initPresentar()
     {
@@ -124,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return true;
 
     }
+
     @Override
     public boolean onQueryTextSubmit(String query) {
         mMainPresentar.searchMusic(query);
@@ -167,5 +180,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             mMainPresentar.setIdlingResource(mIdlingResource);
         }
         return mIdlingResource;
+    }
+
+    @Override
+    public void notFoundResponse(String toast) {
+
     }
 }

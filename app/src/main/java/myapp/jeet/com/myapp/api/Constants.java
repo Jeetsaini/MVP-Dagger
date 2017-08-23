@@ -17,7 +17,7 @@
 package myapp.jeet.com.myapp.api;
 
 public class Constants {
-
+  private Constants() {}
   public static final String SPOTIFY_API = "https://api.spotify.com";
   public static final String ARTIST_SEARCH = "/v1/search?type=artist";
   public static final String QUERY_SEARCH = "q";
@@ -25,5 +25,5 @@ public class Constants {
   public static final String ARTIST_TRACKS =
       "v1/artists/{" + PATH_ARTIST_TRACKS + "}/top-tracks?country=SE";
 
-  private Constants() {}
+
 }

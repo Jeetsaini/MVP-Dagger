@@ -1,6 +1,7 @@
 package myapp.jeet.com.myapp.spotify;
 
 import android.app.Application;
+import android.content.Context;
 
 
 import myapp.jeet.com.myapp.di.DaggerMainComponent;
@@ -18,20 +19,24 @@ public class BaseApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        mMainComponent= DaggerMainComponent.builder().networkModule(new NetworkModule()).build();
     }
 
-    public MainComponent getMainComponent()
+    public MainComponent getMainComponent(Context context)
     {
+        mMainComponent= DaggerMainComponent.builder().networkModule(new NetworkModule(context)).build();
+
         return mMainComponent;
     }
 
-    public void setMainModule(NetworkModule networkModule)
+    public void setMainModule(NetworkModule networkModule, Context context)
     {
         this.mNetworkModule=networkModule;
-        mMainComponent= DaggerMainComponent.builder().networkModule(new NetworkModule()).build();
+        mMainComponent= DaggerMainComponent.builder().networkModule(new NetworkModule(context)).build();
+    }
 
-
+    public NetworkModule getNetworkModule()
+    {
+        return mNetworkModule;
     }
 
 
